@@ -9,6 +9,7 @@ const CourseInfo = {
   name: "Introduction to JavaScript"
 };
 
+
 // The provided assignment group.
 
 // {
@@ -56,6 +57,7 @@ const AssignmentGroup = {
     }
   ]
 };
+
 
 // The provided learner submission data.
 
@@ -115,8 +117,64 @@ const LearnerSubmissions = [
 
 
 function getLearnerData(course, ag, submissions) {
-  // here, we would process this data to achieve the desired result.
+    try{
+    // here, we would process this data to achieve the desired result.
+    if (course.id != ag.course_id)
+        throw new Error("Error: Input was invalid. AssignmentGroup does not belong to its course (mismatching course_id).");
+    
+    let results = {}
+    let output = []
 
+    for (let s in submissions){ // looping through student submissions
+
+
+        let assignment = null;
+        for (a in ag.assignments){ // finding matching assignment
+            if (ag.assignments[a].id === s.assignment_id) {
+                assignment = ag.assignments[a];
+                break;
+            }
+        }
+
+        if (!assignment)
+            continue;
+
+        if (new Date(assignment.due_at) > new Date())
+            continue;
+
+        let possible = Number(assignment.points_possible);
+        if (possible <= 0)
+            continue;
+        
+        let score = Number(s.submission.score);
+        if (new Date(s.submission.submitted_at) > new Date(assignment.due_at)) {
+            score = score - possible * 0.1;
+            if (score < 0)
+                score = 0;
+        }
+
+        let percent = score / possible;
+
+        if (!results[s.learner_id]) {
+            results[s.learner_id] = {
+                id: s.learner_id,
+                totalScore: 0,
+                totalPossible: 0
+            };
+        }
+
+        results[s.learner_id][s.assignment_id] = percent;
+
+        results[s.learner_id].totalScore += score;
+        results[s.learner_id].totalPossible += possible;
+    }
+
+    for (let k in results){
+        results[k].avg = results[k].totalScore / results[k].totalPossible;
+        delete results[k].totalScore;
+        delete results[k].totalPossible;
+        output.push(results[k]);
+    }
 
 
 //   const result = [
@@ -134,14 +192,14 @@ function getLearnerData(course, ag, submissions) {
 //     }
 //   ];
 
-  return result;
-}
-
-try{
-    const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
-}catch(err){
+  return output;
+  }catch(err){
     console.log(err)
 }
 
+}
+
+
+const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
 
 console.log(result);
