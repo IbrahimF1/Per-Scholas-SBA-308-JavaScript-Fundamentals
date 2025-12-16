@@ -1,4 +1,5 @@
 // The provided course information.
+
 // {
 //     "id": number,
 //     "name": string,
@@ -9,14 +10,26 @@ const CourseInfo = {
 };
 
 // The provided assignment group.
+
 // {
 //     "id": number,
 //     "name": string,
-//     // the due date for the assignment
-//     "due_at": Date string,
-//     // the maximum points possible for the assignment
-//     "points_possible": number,
+//     // the ID of the course the assignment group belongs to
+//     "course_id": number,
+//     // the percentage weight of the entire assignment group
+//     "group_weight": number,
+//     "assignments": [
+//         {
+//             "id": number,
+//             "name": string,
+//             // the due date for the assignment
+//             "due_at": Date string,
+//             // the maximum points possible for the assignment
+//             "points_possible": number,
+//         }
+//     ],
 // }
+
 const AssignmentGroup = {
   id: 12345,
   name: "Fundamentals of JavaScript",
@@ -45,6 +58,7 @@ const AssignmentGroup = {
 };
 
 // The provided learner submission data.
+
 // {
 //     "learner_id": number,
 //     "assignment_id": number,
@@ -126,7 +140,8 @@ function getLearnerData(course, ag, submissions) {
 try{
     const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
 }catch(err){
-    console.error(err)
+    console.log(err)
 }
+
 
 console.log(result);
